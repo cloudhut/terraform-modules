@@ -1,12 +1,14 @@
 locals {
-  deployment_labels = merge({app="kowl-business"}, var.labels, var.deployment_labels)
+  deployment_labels = merge({
+    app = "kowl-business"
+  }, var.labels, var.deployment_labels)
 }
 
 resource "kubernetes_deployment" "this" {
   metadata {
-    namespace = var.labels
-    name = var.deployment_name
-    labels = local.deployment_labels
+    namespace   = var.namespace
+    name        = var.deployment_name
+    labels      = local.deployment_labels
     annotations = merge(var.annotations, var.deployment_annotations)
   }
 
@@ -22,29 +24,45 @@ resource "kubernetes_deployment" "this" {
         labels = local.deployment_labels
       }
 
-
       spec {
         security_context {
           run_as_user = 99
-          fs_group = 99
+          fs_group    = 99
+        }
+
+        volume {
+          name = "secrets"
+          secret {
+            secret_name = kubernetes_secret.this.metadata.0.name
+          }
+        }
+
+        volume {
+          name = "configs"
+          config_map {
+            name = kubernetes_config_map.this.metadata.0.name
+          }
         }
 
         container {
           name  = "kowl"
-          image = "${var.deployment_kowl_image}:${var.deployment_kowl_image_tag}}"
-          args = concat(
-            ["--config.filepath=/etc/kowl/config.yaml"],
-            var.secret_kafka_sasl_password != "" ? ["--kafka.sasl.password=$(KAFKA_SASL_PASSWORD)"] : [],
-            var.secret_kafka_tls_passphrase != ""  ? ["--kafka.tls.passphrase=$(KAFKA_TLS_PASSPHRASE)"] : [],
-            var.secret_cloudhut_license_token != ""  ? ["--cloudhut.license-token=$(CLOUDHUT_LICENSE_TOKEN)"] : [],
-            var.secret_cloudhut_license_token != ""  ? ["--login.jwt-secret=$(LOGIN_JWT_SECRET)"] : [],
+          image = "${var.deployment_kowl_image}:${var.deployment_kowl_image_tag}"
+          args  = concat(
+          ["--config.filepath=/etc/kowl/configs/config.yaml"],
+          var.secret_kafka_sasl_password != "" ? ["--kafka.sasl.password=$(KAFKA_SASL_PASSWORD)"] : [],
+          var.secret_kafka_tls_passphrase != ""  ? ["--kafka.tls.passphrase=$(KAFKA_TLS_PASSPHRASE)"] : [],
+          var.secret_cloudhut_license_token != ""  ? ["--cloudhut.license-token=$(CLOUDHUT_LICENSE_TOKEN)"] : [],
 
-            var.secret_login_google_oauth_client_secret != ""  ? ["--login.google.client-secret=$(LOGIN_GOOGLE_CLIENT_SECRET)"] : [],
-            var.secret_login_github_oauth_client_secret != ""  ? ["--login.github.client-secret=$(LOGIN_GITHUB_CLIENT_SECRET)"] : [],
+          # Secrets for login providers
+          var.secret_cloudhut_license_token != ""  ? ["--login.jwt-secret=$(LOGIN_JWT_SECRET)"] : [],
+          var.secret_login_google_oauth_client_secret != ""  ? [
+            "--login.google.client-secret=$(LOGIN_GOOGLE_CLIENT_SECRET)"] : [],
+          var.secret_login_github_oauth_client_secret != ""  ? [
+            "--login.github.client-secret=$(LOGIN_GITHUB_CLIENT_SECRET)"] : [],
           )
 
           port {
-            name = "http"
+            name           = "http"
             container_port = var.deployment_kowl_container_port
           }
 
@@ -59,11 +77,16 @@ resource "kubernetes_deployment" "this" {
             }
           }
 
-          liveness_probe {
-            http_get {
-              path = "/admin/health"
-              port = "http"
-            }
+          volume_mount {
+            name       = "secrets"
+            mount_path = "/etc/kowl/secrets"
+            read_only  = true
+          }
+
+          volume_mount {
+            name       = "configs"
+            mount_path = "/etc/kowl/configs"
+            read_only  = true
           }
 
           dynamic "env" {
@@ -75,7 +98,7 @@ resource "kubernetes_deployment" "this" {
               value_from {
                 secret_key_ref {
                   name = kubernetes_secret.this.metadata.0.name
-                  key = "kafka-sasl-password"
+                  key  = "kafka-sasl-password"
                 }
               }
             }
@@ -90,7 +113,7 @@ resource "kubernetes_deployment" "this" {
               value_from {
                 secret_key_ref {
                   name = kubernetes_secret.this.metadata.0.name
-                  key = "kafka-tls-passphrase"
+                  key  = "kafka-tls-passphrase"
                 }
               }
             }
@@ -105,7 +128,7 @@ resource "kubernetes_deployment" "this" {
               value_from {
                 secret_key_ref {
                   name = kubernetes_secret.this.metadata.0.name
-                  key = "cloudhut-license-token"
+                  key  = "cloudhut-license-token"
                 }
               }
             }
@@ -120,7 +143,7 @@ resource "kubernetes_deployment" "this" {
               value_from {
                 secret_key_ref {
                   name = kubernetes_secret.this.metadata.0.name
-                  key = "login-jwt-secret"
+                  key  = "login-jwt-secret"
                 }
               }
             }
@@ -135,7 +158,7 @@ resource "kubernetes_deployment" "this" {
               value_from {
                 secret_key_ref {
                   name = kubernetes_secret.this.metadata.0.name
-                  key = "login-google-oauth-client-secret"
+                  key  = "login-google-oauth-client-secret"
                 }
               }
             }
@@ -150,14 +173,22 @@ resource "kubernetes_deployment" "this" {
               value_from {
                 secret_key_ref {
                   name = kubernetes_secret.this.metadata.0.name
-                  key = "login-github-oauth-client-secret"
+                  key  = "login-github-oauth-client-secret"
                 }
               }
             }
           }
 
+          liveness_probe {
+            http_get {
+              path = "/admin/health"
+              port = "http"
+            }
+          }
+
           readiness_probe {
-            initial_delay_seconds = 10 # Wait for keep alive / connection to brokers
+            initial_delay_seconds = 10
+            # Wait for keep alive / connection to brokers
 
             http_get {
               path = "/admin/health"
