@@ -12,6 +12,9 @@ resource "kubernetes_secret" "this" {
   data = {
     # Kafka
     kafka-sasl-password  = var.secret_kafka_sasl_password
+    kafka-tls-ca         = var.secret_kafka_tls_ca_file
+    kafka-tls-cert       = var.secret_kafka_tls_cert_file
+    kafka-tls-key        = var.secret_kafka_tls_key_file
     kafka-tls-passphrase = var.secret_kafka_tls_passphrase
 
     # CloudHut

@@ -21,7 +21,12 @@ resource "kubernetes_deployment" "this" {
 
     template {
       metadata {
-        labels = local.deployment_labels
+        labels      = local.deployment_labels
+        annotations = {
+          "checksum/kowl-config"   = sha512(var.kowl_config),
+          "checksum/roles"         = sha512(var.kowl_roles),
+          "checksum/role-bindings" = sha512(var.kowl_role_bindings),
+        }
       }
 
       spec {
