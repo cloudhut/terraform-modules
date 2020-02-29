@@ -8,8 +8,8 @@ resource "kubernetes_service" "this" {
     selector = local.deployment_labels
 
     port {
-      port        = var.deployment_kowl_container_port
-      target_port = 80
+      port        = 80
+      target_port = var.deployment_kowl_container_port
     }
 
     type = "ClusterIP"
