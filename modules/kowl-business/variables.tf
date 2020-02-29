@@ -86,6 +86,24 @@ variable "secret_kafka_tls_passphrase" {
   default     = ""
 }
 
+variable "secret_kafka_tls_ca_file" {
+  type        = string
+  description = "TLS CA file"
+  default     = ""
+}
+
+variable "secret_kafka_tls_cert_file" {
+  type        = string
+  description = "TLS cert file"
+  default     = ""
+}
+
+variable "secret_kafka_tls_key_file" {
+  type        = string
+  description = "TLS key file"
+  default     = ""
+}
+
 variable "secret_cloudhut_license_token" {
   type        = string
   description = "Token for your Kowl license"
@@ -133,6 +151,33 @@ variable "kowl_roles" {
 variable "kowl_role_bindings" {
   type        = string
   description = "Role bindings for Kowl business"
+  default     = ""
+}
+
+#----------------------------------------
+# Ingress
+#----------------------------------------
+variable "ingress_enabled" {
+  type        = bool
+  description = "Whether or not an ingress resource should be deployed"
+  default     = false
+}
+
+variable "ingress_annotations" {
+  type        = map(string)
+  description = "Map of annotations that will be applied on the ingress"
+  default     = {}
+}
+
+variable "ingress_internal_annotations" {
+  type        = map(string)
+  description = "Map of annotations that will be applied on the internal ingress (administrative endpoints)"
+  default     = {}
+}
+
+variable "ingress_host" {
+  type        = string
+  description = "Hostname for the ingress (e.g. kowl.prod.mycompany.com)"
   default     = ""
 }
 
