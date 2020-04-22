@@ -10,4 +10,8 @@ locals {
       memory = "500Mi"
     }
   }
+
+  global_labels = merge(var.labels, {
+    app = "kowl"
+  })
 }

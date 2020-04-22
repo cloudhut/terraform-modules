@@ -7,6 +7,7 @@ resource "kubernetes_secret" "this" {
   metadata {
     name      = var.deployment_name
     namespace = var.namespace
+    labels    = local.global_labels
   }
 
   data = {

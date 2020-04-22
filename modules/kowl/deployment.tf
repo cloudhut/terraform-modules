@@ -1,14 +1,8 @@
-locals {
-  deployment_labels = merge({
-    app = "kowl-business"
-  }, var.labels, var.deployment_labels)
-}
-
 resource "kubernetes_deployment" "this" {
   metadata {
     namespace   = var.namespace
     name        = var.deployment_name
-    labels      = local.deployment_labels
+    labels      = local.global_labels
     annotations = merge(var.annotations, var.deployment_annotations)
   }
 
@@ -16,12 +10,12 @@ resource "kubernetes_deployment" "this" {
     replicas = var.deployment_replicas
 
     selector {
-      match_labels = local.deployment_labels
+      match_labels = local.global_labels
     }
 
     template {
       metadata {
-        labels      = local.deployment_labels
+        labels      = local.global_labels
         annotations = {
           "checksum/kowl-config"   = sha512(var.kowl_config),
           "checksum/roles"         = sha512(var.kowl_roles),

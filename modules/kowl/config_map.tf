@@ -2,9 +2,7 @@ resource "kubernetes_config_map" "this" {
   metadata {
     namespace = var.namespace
     name      = var.deployment_name
-    labels    = merge({
-      app = "kowl-business"
-    }, var.labels)
+    labels    = local.global_labels
   }
 
   data = {

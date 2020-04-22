@@ -2,10 +2,11 @@ resource "kubernetes_service" "this" {
   metadata {
     name      = var.deployment_name
     namespace = kubernetes_deployment.this.metadata.0.namespace
+    labels    = local.global_labels
   }
 
   spec {
-    selector = local.deployment_labels
+    selector = local.global_labels
 
     port {
       port        = 80

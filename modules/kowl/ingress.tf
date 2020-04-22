@@ -1,12 +1,11 @@
-# The internal ingress targets all /admin routes which you most likely do not want to expose to the public
-resource "kubernetes_ingress" "this_internal" {
+resource "kubernetes_ingress" "this" {
   count = var.ingress_enabled ? 1 : 0
 
   metadata {
-    name        = "${var.deployment_name}-internal"
+    name        = var.deployment_name
     namespace   = var.namespace
-    labels      = local.deployment_labels
-    annotations = merge(var.annotations, var.ingress_internal_annotations)
+    labels      = local.global_labels
+    annotations = merge(var.annotations, var.ingress_annotations)
   }
 
   spec {
@@ -25,7 +24,7 @@ resource "kubernetes_ingress" "this_internal" {
             service_port = kubernetes_service.this.spec.0.port.0.port
           }
 
-          path = "/admin"
+          path = "/"
         }
       }
     }
@@ -36,4 +35,3 @@ resource "kubernetes_ingress" "this_internal" {
     }
   }
 }
-

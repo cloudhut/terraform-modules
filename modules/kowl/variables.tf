@@ -11,7 +11,8 @@ variable "labels" {
   type        = map(string)
   description = "Map of labels that will be merged with all other labels on all kubernetes resource."
   default     = {
-    app = "kowl-business"
+    managed-by = "Terraform"
+    terraform-module = "cloudhut-kowl"
   }
 }
 
