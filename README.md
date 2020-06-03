@@ -9,6 +9,33 @@ There are full examples included in the examples folder but simple usage is as f
 ### Kowl
 
 ```hcl
+module "kowl" {
+  source = "git::https://github.com/cloudhut/terraform-modules.git//modules/kowl?ref=v1.0.0"
+
+  # Deployment
+  deployment_replicas       = 2
+  deployment_kowl_image     = "quay.io/cloudhut/kowl"
+  deployment_kowl_image_tag = "v1.0.0-beta1"
+  kowl_config               = file("${path.module}/config.yaml")
+
+  # Ingress
+  ingress_enabled     = true
+  ingress_annotations = {
+    "kubernetes.io/ingress.class" = "nginx"
+    "kubernetes.io/tls-acme"      = "true"
+  }
+  ingress_host        = "kowl.my-company.com"
+
+  # Kubernetes
+  kubernetes_host                   = "https://${data.google_container_cluster.this.endpoint}"
+  kubernetes_token                  = data.google_client_config.default.access_token
+  kubernetes_cluster_ca_certificate = base64decode(data.google_container_cluster.this.master_auth.0.cluster_ca_certificate)
+}
+```
+
+### Kowl Business
+
+```hcl
 module "kowl_business" {
   source = "git::https://github.com/cloudhut/terraform-modules.git//modules/kowl?ref=v1.0.0"
 
