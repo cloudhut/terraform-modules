@@ -9,7 +9,7 @@ There are full examples included in the examples folder but simple usage is as f
 ### Kowl
 
 ```hcl
-module "bigdata_int" {
+module "kowl_business" {
   source = "git::https://github.com/cloudhut/terraform-modules.git//modules/kowl?ref=v1.0.0"
 
   # Deployment
