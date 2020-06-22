@@ -1,8 +1,9 @@
 resource "kubernetes_service" "this" {
   metadata {
-    name      = var.deployment_name
-    namespace = kubernetes_deployment.this.metadata.0.namespace
-    labels    = local.global_labels
+    name        = var.deployment_name
+    namespace   = kubernetes_deployment.this.metadata.0.namespace
+    labels      = local.global_labels
+    annotations = merge(var.annotations, var.service_annotations)
   }
 
   spec {
