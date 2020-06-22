@@ -183,6 +183,15 @@ variable "ingress_host" {
 }
 
 #----------------------------------------
+# Service
+#----------------------------------------
+variable "service_annotations" {
+  type        = map(string)
+  description = "Map of annotations that will be applied to the service"
+  default     = {}
+}
+
+#----------------------------------------
 # Provider
 #----------------------------------------
 variable "kubernetes_host" {
