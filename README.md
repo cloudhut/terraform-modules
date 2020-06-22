@@ -10,7 +10,7 @@ There are full examples included in the examples folder but simple usage is as f
 
 ```hcl
 module "kowl" {
-  source = "git::https://github.com/cloudhut/terraform-modules.git//modules/kowl?ref=v1.0.0"
+  source = "git::https://github.com/cloudhut/terraform-modules.git//modules/kowl?ref=v1.1.0"
 
   # Deployment
   deployment_replicas       = 2
@@ -37,7 +37,7 @@ module "kowl" {
 
 ```hcl
 module "kowl_business" {
-  source = "git::https://github.com/cloudhut/terraform-modules.git//modules/kowl?ref=v1.0.0"
+  source = "git::https://github.com/cloudhut/terraform-modules.git//modules/kowl?ref=v1.1.0"
 
   # Deployment
   deployment_replicas       = 2
