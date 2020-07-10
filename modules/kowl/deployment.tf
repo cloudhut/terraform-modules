@@ -16,11 +16,11 @@ resource "kubernetes_deployment" "this" {
     template {
       metadata {
         labels      = local.global_labels
-        annotations = {
+        annotations = merge({
           "checksum/kowl-config"   = sha512(var.kowl_config),
           "checksum/roles"         = sha512(var.kowl_roles),
           "checksum/role-bindings" = sha512(var.kowl_role_bindings),
-        }
+        }, var.pod_annotations)
       }
 
       spec {
