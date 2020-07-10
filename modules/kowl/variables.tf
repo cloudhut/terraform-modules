@@ -43,6 +43,11 @@ variable "deployment_annotations" {
   }
 }
 
+variable "pod_annotations" {
+  description = "Map of annotations to apply to pods"
+  default = {}
+}
+
 variable "deployment_labels" {
   description = "Map of labels to apply to the deployment."
   default     = {}
