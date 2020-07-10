@@ -11,7 +11,7 @@ variable "labels" {
   type        = map(string)
   description = "Map of labels that will be merged with all other labels on all kubernetes resource."
   default     = {
-    managed-by = "Terraform"
+    managed-by       = "Terraform"
     terraform-module = "cloudhut-kowl"
   }
 }
@@ -189,6 +189,12 @@ variable "service_annotations" {
   type        = map(string)
   description = "Map of annotations that will be applied to the service"
   default     = {}
+}
+
+variable "service_type" {
+  type        = string
+  description = "Kubernetes service type"
+  default     = "ClusterIP"
 }
 
 #----------------------------------------

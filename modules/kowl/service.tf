@@ -14,6 +14,6 @@ resource "kubernetes_service" "this" {
       target_port = var.deployment_kowl_container_port
     }
 
-    type = "ClusterIP"
+    type = var.service_type
   }
 }
