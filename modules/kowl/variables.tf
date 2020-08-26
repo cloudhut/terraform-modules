@@ -45,7 +45,7 @@ variable "deployment_annotations" {
 
 variable "pod_annotations" {
   description = "Map of annotations to apply to pods"
-  default = {}
+  default     = {}
 }
 
 variable "deployment_labels" {
@@ -200,22 +200,4 @@ variable "service_type" {
   type        = string
   description = "Kubernetes service type"
   default     = "ClusterIP"
-}
-
-#----------------------------------------
-# Provider
-#----------------------------------------
-variable "kubernetes_host" {
-  type        = string
-  description = "The hostname (in form of URI) of Kubernetes master"
-}
-
-variable "kubernetes_token" {
-  type        = string
-  description = "Token of your service account"
-}
-
-variable "kubernetes_cluster_ca_certificate" {
-  type        = string
-  description = "PEM-encoded root certificates bundle for TLS authentication"
 }
