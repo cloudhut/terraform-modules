@@ -67,12 +67,12 @@ resource "kubernetes_deployment" "this" {
 
           resources {
             limits {
-              cpu    = local.resources.limits.cpu
-              memory = local.resources.limits.memory
+              cpu    = var.deployment_kowl_resources.limits.cpu
+              memory = var.deployment_kowl_resources.limits.memory
             }
             requests {
-              cpu    = local.resources.requests.cpu
-              memory = local.resources.requests.memory
+              cpu    = var.deployment_kowl_resources.requests.cpu
+              memory = var.deployment_kowl_resources.requests.memory
             }
           }
 
