@@ -25,8 +25,9 @@ resource "kubernetes_deployment" "this" {
 
       spec {
         security_context {
-          run_as_user = 99
-          fs_group    = 99
+          run_as_user     = 99
+          fs_group        = 99
+          run_as_non_root = true
         }
 
         volume {
