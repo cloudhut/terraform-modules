@@ -59,6 +59,23 @@ variable "deployment_replicas" {
   default     = 1
 }
 
+variable "deployment_resources_limits" {
+  type        = map(string)
+  description = "Resource limits that shall be assigned to the pods"
+  default     = {
+    memory = "512Mi"
+  }
+}
+
+variable "deployment_resources_requests" {
+  type        = map(string)
+  description = "Resource limits that shall be assigned to the pods"
+  default     = {
+    cpu    = "100m"
+    memory = "512Mi"
+  }
+}
+
 variable "deployment_kowl_image" {
   type        = string
   description = "Docker image url"

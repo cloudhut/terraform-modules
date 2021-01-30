@@ -67,14 +67,8 @@ resource "kubernetes_deployment" "this" {
           }
 
           resources {
-            limits {
-              cpu    = local.resources.limits.cpu
-              memory = local.resources.limits.memory
-            }
-            requests {
-              cpu    = local.resources.requests.cpu
-              memory = local.resources.requests.memory
-            }
+            limits   = var.deployment_resources_limits
+            requests = var.deployment_resources_requests
           }
 
           volume_mount {
