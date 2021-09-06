@@ -157,6 +157,18 @@ variable "secret_login_github_private_key" {
   default     = ""
 }
 
+variable "secret_topic_docs_git_ssh_private_key" {
+  type        = string
+  description = "Private SSH key that grants access to the repository with topic documentation "
+  default     = ""
+}
+
+variable "secret_topic_docs_git_basic_auth_password" {
+  type        = string
+  description = "Basic auth password that grants access to the repository with topic documentation "
+  default     = ""
+}
+
 #----------------------------------------
 # Configmap
 #----------------------------------------

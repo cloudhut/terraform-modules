@@ -48,17 +48,26 @@ resource "kubernetes_deployment" "this" {
           name  = "kowl"
           image = "${var.deployment_kowl_image}:${var.deployment_kowl_image_tag}"
           args  = concat(
-          ["--config.filepath=/etc/kowl/configs/config.yaml"],
-          var.secret_kafka_sasl_password != "" ? ["--kafka.sasl.password=$(KAFKA_SASL_PASSWORD)"] : [],
-          var.secret_kafka_tls_passphrase != ""  ? ["--kafka.tls.passphrase=$(KAFKA_TLS_PASSPHRASE)"] : [],
-          var.secret_cloudhut_license_token != ""  ? ["--cloudhut.license-token=$(CLOUDHUT_LICENSE_TOKEN)"] : [],
+          [
+            "--config.filepath=/etc/kowl/configs/config.yaml"],
+          var.secret_kafka_sasl_password != "" ? [
+            "--kafka.sasl.password=$(KAFKA_SASL_PASSWORD)"] : [],
+          var.secret_kafka_tls_passphrase != "" ? [
+            "--kafka.tls.passphrase=$(KAFKA_TLS_PASSPHRASE)"] : [],
+          var.secret_cloudhut_license_token != "" ? [
+            "--cloudhut.license-token=$(CLOUDHUT_LICENSE_TOKEN)"] : [],
 
           # Secrets for login providers
-          var.secret_cloudhut_license_token != ""  ? ["--login.jwt-secret=$(LOGIN_JWT_SECRET)"] : [],
-          var.secret_login_google_oauth_client_secret != ""  ? [
+          var.secret_cloudhut_license_token != "" ? [
+            "--login.jwt-secret=$(LOGIN_JWT_SECRET)"] : [],
+          var.secret_login_google_oauth_client_secret != "" ? [
             "--login.google.client-secret=$(LOGIN_GOOGLE_CLIENT_SECRET)"] : [],
-          var.secret_login_github_oauth_client_secret != ""  ? [
+          var.secret_login_github_oauth_client_secret != "" ? [
             "--login.github.client-secret=$(LOGIN_GITHUB_CLIENT_SECRET)"] : [],
+
+          # Secrets for GitHub
+          var.secret_topic_docs_git_basic_auth_password != "" ? [
+            "owl.topic-documentation.git.basic-auth.password=$(TOPIC_DOCUMENTATION_BASIC_AUTH_PASSWORD)"] : [],
           )
 
           port {
@@ -168,6 +177,21 @@ resource "kubernetes_deployment" "this" {
                 secret_key_ref {
                   name = kubernetes_secret.this.metadata.0.name
                   key  = "login-github-oauth-client-secret"
+                }
+              }
+            }
+          }
+
+          dynamic "env" {
+            for_each = length(var.secret_topic_docs_git_basic_auth_password) > 0 ? [1] : []
+
+            content {
+              name = "TOPIC_DOCUMENTATION_BASIC_AUTH_PASSWORD"
+
+              value_from {
+                secret_key_ref {
+                  name = kubernetes_secret.this.metadata.0.name
+                  key  = "github-topic-docs-basic-auth-password"
                 }
               }
             }

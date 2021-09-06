@@ -27,5 +27,9 @@ resource "kubernetes_secret" "this" {
     "login-google-groups-service-account.json" = var.secret_login_google_groups_service_account
     login-github-oauth-client-secret           = var.secret_login_github_oauth_client_secret
     "login-github-private-key.pem"             = var.secret_login_github_private_key
+
+    # Topic Docs / GitHub
+    "github-topic-docs-private-key.pem"     = var.secret_topic_docs_git_ssh_private_key
+    "github-topic-docs-basic-auth-password" = var.secret_topic_docs_git_basic_auth_password
   }
 }
