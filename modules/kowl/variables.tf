@@ -10,7 +10,7 @@ variable "annotations" {
 variable "labels" {
   type        = map(string)
   description = "Map of labels that will be merged with all other labels on all kubernetes resource."
-  default     = {
+  default = {
     managed-by       = "Terraform"
     terraform-module = "cloudhut-kowl"
   }
@@ -36,7 +36,7 @@ variable "deployment_name" {
 
 variable "deployment_annotations" {
   description = "Map of annotations to apply to the deployment."
-  default     = {
+  default = {
     "prometheus.io/scrape" = "true"
     "prometheus.io/port"   = 8080
     "prometheus.io/path"   = "/admin/metrics"
@@ -62,7 +62,7 @@ variable "deployment_replicas" {
 variable "deployment_resources_limits" {
   type        = map(string)
   description = "Resource limits that shall be assigned to the pods"
-  default     = {
+  default = {
     memory = "512Mi"
   }
 }
@@ -70,7 +70,7 @@ variable "deployment_resources_limits" {
 variable "deployment_resources_requests" {
   type        = map(string)
   description = "Resource limits that shall be assigned to the pods"
-  default     = {
+  default = {
     cpu    = "100m"
     memory = "512Mi"
   }
@@ -92,6 +92,12 @@ variable "deployment_kowl_container_port" {
   type        = number
   description = "HTTP server port which is exposed by Kowl"
   default     = 8080
+}
+
+variable "deployment_kowl_node_selector" {
+  type        = map(string)
+  default     = {}
+  description = "Node selector map"
 }
 
 #----------------------------------------
