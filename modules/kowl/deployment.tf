@@ -15,7 +15,7 @@ resource "kubernetes_deployment" "this" {
 
     template {
       metadata {
-        labels      = local.global_labels
+        labels = local.global_labels
         annotations = merge({
           "checksum/kowl-config"   = sha512(var.kowl_config),
           "checksum/roles"         = sha512(var.kowl_roles),
@@ -29,6 +29,8 @@ resource "kubernetes_deployment" "this" {
           fs_group        = 99
           run_as_non_root = true
         }
+
+        node_selector = var.deployment_kowl_node_selector
 
         volume {
           name = "secrets"
@@ -47,26 +49,26 @@ resource "kubernetes_deployment" "this" {
         container {
           name  = "kowl"
           image = "${var.deployment_kowl_image}:${var.deployment_kowl_image_tag}"
-          args  = concat(
-          [
+          args = concat(
+            [
             "--config.filepath=/etc/kowl/configs/config.yaml"],
-          var.secret_kafka_sasl_password != "" ? [
+            var.secret_kafka_sasl_password != "" ? [
             "--kafka.sasl.password=$(KAFKA_SASL_PASSWORD)"] : [],
-          var.secret_kafka_tls_passphrase != "" ? [
+            var.secret_kafka_tls_passphrase != "" ? [
             "--kafka.tls.passphrase=$(KAFKA_TLS_PASSPHRASE)"] : [],
-          var.secret_cloudhut_license_token != "" ? [
+            var.secret_cloudhut_license_token != "" ? [
             "--cloudhut.license-token=$(CLOUDHUT_LICENSE_TOKEN)"] : [],
 
-          # Secrets for login providers
-          var.secret_cloudhut_license_token != "" ? [
+            # Secrets for login providers
+            var.secret_cloudhut_license_token != "" ? [
             "--login.jwt-secret=$(LOGIN_JWT_SECRET)"] : [],
-          var.secret_login_google_oauth_client_secret != "" ? [
+            var.secret_login_google_oauth_client_secret != "" ? [
             "--login.google.client-secret=$(LOGIN_GOOGLE_CLIENT_SECRET)"] : [],
-          var.secret_login_github_oauth_client_secret != "" ? [
+            var.secret_login_github_oauth_client_secret != "" ? [
             "--login.github.client-secret=$(LOGIN_GITHUB_CLIENT_SECRET)"] : [],
 
-          # Secrets for GitHub
-          var.secret_topic_docs_git_basic_auth_password != "" ? [
+            # Secrets for GitHub
+            var.secret_topic_docs_git_basic_auth_password != "" ? [
             "owl.topic-documentation.git.basic-auth.password=$(TOPIC_DOCUMENTATION_BASIC_AUTH_PASSWORD)"] : [],
           )
 
